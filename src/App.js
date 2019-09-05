@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
+import SearchUnit from './components/SearchUnit';
+import Results from './components/Results';
 
 export const BACKEND = process.env.BACKEND || 'localhost:4000';
 
@@ -34,9 +36,19 @@ export default class App extends Component {
     window.removeEventListener('beforeunload', this.componentCleanup);
   }
 
+  /*
+  App structure
+    Pagination: on backend, sort then request first 20, and then page-th number of batch...
+    Page No.
+    Next Page
+    Prev Page
+    List that is clickable
+  */
   render() {
     return (
       <div>
+        <SearchUnit/>
+        <Results/>
       </div>
     )
   }
