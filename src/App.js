@@ -35,11 +35,9 @@ export default class App extends Component {
 
   async testAPI(e) {
     e.preventDefault();
-    console.log("clicked test button")
-    console.log('environment is ', process.env.REACT_APP_MODE)
     await fetch(`${BACKEND}/test`).then(async res => {
       let resolvedRes = await res.json();
-      console.log("Server says", resolvedRes.message);
+      alert(`Server says ${resolvedRes.message}`);
     })
   }
 

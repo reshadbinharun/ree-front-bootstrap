@@ -1,4 +1,4 @@
-[
+export const fakeData = [
     {
       "mainName": "magna408",
       "namesCode": [

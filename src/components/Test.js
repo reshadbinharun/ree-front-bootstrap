@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
-import { Container, Grid, Button, Label, Form } from 'semantic-ui-react'
+import { Container, Grid, Button } from 'semantic-ui-react'
 import { BACKEND } from '../App'
+import { fakeData } from '../testData/drugData';
+
+const TEST_DATA_FILE = '../../testData/drugData.json'
+
 /*
 
 Random drug data is generated using this string -->
@@ -63,35 +67,27 @@ export default class Test extends Component {
         drugFile: null
     }
     this.uploadDrugs = this.uploadDrugs.bind(this);
-    this.handleUpload = this.handleUpload.bind(this);
   }
-  handleUpload(e) {
-    e.preventDefault();
-    let file = e.target.files[0];
-    this.setState({
-        drugFile: file
-    })
-  }
+
+  // CORS configuration requires data to be stringified
   uploadDrugs(e) {
     e.preventDefault();
-    let data = new FormData();
-    data.append('file', this.state.drugFile);
-    console.log(data)
+    let data = JSON.stringify(fakeData);
     fetch(`${BACKEND}/uploadDrugs`, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         },
         method: 'POST',
-        body: 
-        {
-            data
-        }
+        body: data,
     }).then(
-        success => {
-            console.log(success, "Successfully uploaded drug data!"); // Handle the success response object
+        async (res) => {
+            if(res.status === 200) {
+                let resolvedRes = await res.json();
+                alert(resolvedRes.message)
+            }
         }
     ).catch(
-        error => console.log(error) // Handle the error response object
+        error => alert(error) // Handle the error response object
     );
 }
   render() {
@@ -101,30 +97,20 @@ export default class Test extends Component {
             <Grid.Row>
                 {/* empty row to add top padding */}
             </Grid.Row>
-            <Button
-              onClick={this.props.testAPI}
-            >
-              Test API
-            </Button>
-            <Grid.Row>
-                <Form 
-                    onSubmit={this.uploadDrugs}
+                <Button 
+                attached='left'
+                onClick={this.props.testAPI}
+                color='green'
                 >
-                    <Form.Field>
-                        <Label pointing='down'>Upload drug information .json file...</Label>
-                        <Grid.Row>
-                            {/* empty row to add top padding */}                
-                        </Grid.Row>
-                        <input type="file" onChange={this.handleUpload} class="ui big purple center floated button"/>
-                    </Form.Field>
-                    <Button 
-                        color="green" 
-                        type='submit'
-                    >
-                        Upload
-                    </Button>
-                </Form>            
-            </Grid.Row>
+                    Test Server Connection...
+                </Button>
+                <Button
+                color='purple'
+                attached='right'
+                onClick={this.uploadDrugs}
+                >
+                    Upload Test Drug Data...
+                </Button>
             <Grid.Row>
                 {/* empty row to add top padding */}                
             </Grid.Row>
