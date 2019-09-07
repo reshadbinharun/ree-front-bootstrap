@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import SearchUnit from './components/SearchUnit';
 import Results from './components/Results';
+import { Button } from 'semantic-ui-react'
 
-export const BACKEND = process.env.BACKEND || 'localhost:4000';
+
+export const BACKEND = process.env.BACKEND || 'http://localhost:8080';
 
 const compName = 'App_LS';
 
@@ -28,6 +30,16 @@ export default class App extends Component {
     this.handleSearchTermsChange = this.handleSearchTermsChange.bind(this);
     this.handleSelectItem = this.handleSelectItem.bind(this);
     this.getSearchResults = this.getSearchResults.bind(this);
+    this.testAPI = this.testAPI.bind(this);
+  }
+
+  async testAPI(e) {
+    e.preventDefault();
+    console.log("clicked test button")
+    await fetch(`${BACKEND}/test`).then(async res => {
+      let resolvedRes = await res.json();
+      console.log("Server says", resolvedRes.message);
+    })
   }
 
   async getSearchResults(searchTerms, pageNum) {
@@ -106,8 +118,14 @@ export default class App extends Component {
   render() {
     let searchView =
       <div>
+        <Button
+          onClick={this.testAPI}
+        >
+          Test API
+        </Button>
         <SearchUnit
           handleSearchTermsChange={this.handleSearchTermsChange}
+          searchValue={this.state.searchTerms}
         />
         <Results
           results={this.state.results}

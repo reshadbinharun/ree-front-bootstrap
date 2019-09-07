@@ -14,6 +14,7 @@ export default class SearchUnit extends Component {
           <Grid.Column width={8}>
             <SearchBar
               handleSearchTermChange={this.props.handleSearchTermChange}
+              searchValue={this.props.searchValue}
             />
           </Grid.Column>
           <Grid.Column width={8}>

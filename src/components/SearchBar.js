@@ -4,9 +4,6 @@ import { Search, Grid } from 'semantic-ui-react'
 export default class SearchBar extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      searchValue: this.props.searchTerms || '',
-    }
   }
   render() {
     return (
@@ -16,7 +13,7 @@ export default class SearchBar extends Component {
             open={false}
             onSearchChange={this.props.handleSearchTermChange}
             placeholder='Search by drug name or mechanism...'
-            value={this.state.searchValue}
+            value={this.props.searchValue}
           />
         </Grid.Column>
       </Grid>
