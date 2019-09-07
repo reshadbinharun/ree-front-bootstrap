@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import 'semantic-ui-css/semantic.min.css';
 import SearchUnit from './components/SearchUnit';
 import Results from './components/Results';
-import { Button } from 'semantic-ui-react'
+import { Segment, Container } from 'semantic-ui-react'
+import Test from './components/Test';
 
-
-export const BACKEND = process.env.BACKEND || 'http://localhost:8080';
+export const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:8080';
 
 const compName = 'App_LS';
 
@@ -36,6 +36,7 @@ export default class App extends Component {
   async testAPI(e) {
     e.preventDefault();
     console.log("clicked test button")
+    console.log('environment is ', process.env.REACT_APP_MODE)
     await fetch(`${BACKEND}/test`).then(async res => {
       let resolvedRes = await res.json();
       console.log("Server says", resolvedRes.message);
@@ -118,19 +119,27 @@ export default class App extends Component {
   render() {
     let searchView =
       <div>
-        <Button
-          onClick={this.testAPI}
-        >
-          Test API
-        </Button>
-        <SearchUnit
-          handleSearchTermsChange={this.handleSearchTermsChange}
-          searchValue={this.state.searchTerms}
-        />
-        <Results
-          results={this.state.results}
-          handleSelectItem={this.handleSelectItem}
-        />
+        <Container>
+            {process.env.REACT_APP_MODE === 'test' ? 
+            <Segment>
+              <Test
+                testAPI={this.testAPI}
+              />
+              </Segment>
+              : null}
+          <Segment>
+            <SearchUnit
+              handleSearchTermChange={this.handleSearchTermsChange}
+              searchValue={this.state.searchTerms}
+            />
+          </Segment>
+          <Segment>
+            <Results
+              results={this.state.results}
+              handleSelectItem={this.handleSelectItem}
+            />
+          </Segment>
+        </Container>
       </div>
     switch (this.state.view) {
       case (SEARCH):

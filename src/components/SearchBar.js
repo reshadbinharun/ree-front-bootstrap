@@ -8,8 +8,9 @@ export default class SearchBar extends Component {
   render() {
     return (
       <Grid>
-        <Grid.Column width={6}>
+        <Grid.Column width={12}>
           <Search
+            input={{ fluid: true }}
             open={false}
             onSearchChange={this.props.handleSearchTermChange}
             placeholder='Search by drug name or mechanism...'
