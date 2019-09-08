@@ -4,6 +4,8 @@ import SearchUnit from './components/SearchUnit';
 import Results from './components/Results';
 import { Segment, Container } from 'semantic-ui-react'
 import Test from './components/Test';
+import DrugView from './components/DrugView';
+import MechanismView from './components/MechanismView';
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:8080';
 
@@ -31,8 +33,15 @@ export default class App extends Component {
     this.handleSelectItem = this.handleSelectItem.bind(this);
     this.getSearchResults = this.getSearchResults.bind(this);
     this.testAPI = this.testAPI.bind(this);
+    this.backToSearch = this.backToSearch.bind(this);
   }
 
+  backToSearch(e) {
+    e.preventDefault();
+    this.setState({
+      view: SEARCH
+    })
+  }
   async testAPI(e) {
     e.preventDefault();
     await fetch(`${BACKEND}/test`).then(async res => {
@@ -144,10 +153,16 @@ export default class App extends Component {
         return searchView;
       case (DRUG):
         //TODO: drug view
-        return null;
+        return <DrugView
+          //props
+          backToSearch={this.backToSearch}
+        />
       case (MECHANISM):
         //TODO: mechanism view
-        return null;
+        return <MechanismView
+        //props
+        backToSearch={this.backToSearch}
+        />;
       default:
         return searchView;
     }
