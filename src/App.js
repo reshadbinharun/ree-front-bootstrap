@@ -9,12 +9,10 @@ import MechanismView from './components/MechanismView';
 
 export const BACKEND = process.env.REACT_APP_BACKEND || 'http://localhost:8080';
 
-const compName = 'App_LS';
-
 // page views
 const SEARCH = 'Search';
-const DRUG = 'drug';
-const MECHANISM = 'mechanism';
+const DRUG = 'Drug';
+const MECHANISM = 'Mechanism';
 
 export default class App extends Component {
   constructor() {
@@ -27,8 +25,8 @@ export default class App extends Component {
       view: SEARCH,
       itemPayload: null,
       searchMode: false, // TODO: used in any way?
+      loading: false,
     };
-    this.componentCleanup = this.componentCleanup.bind(this);
     this.handleSearchTermsChange = this.handleSearchTermsChange.bind(this);
     this.handleSelectItem = this.handleSelectItem.bind(this);
     this.getSearchResults = this.getSearchResults.bind(this);
@@ -58,21 +56,26 @@ export default class App extends Component {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Accept', 'application/json');
-    fetch(`${BACKEND}/getSearchResults`, {
+    fetch(`${BACKEND}/searchNoPage`, {
       method: 'post',
       headers: headers,
-      body: requestParams,
+      body: JSON.stringify(requestParams),
     }).then(async res => {
       let resolvedRes = await res;
       resolvedRes = await resolvedRes.json()
       this.setState({
-        results: resolvedRes && resolvedRes.results
+        results: resolvedRes && resolvedRes.resultsToSend,
+        loading: false
       });
     })
   }
 
   handleSelectItem(e, itemPayload, itemDomain) {
-    // TODO: get info about item and select correct view
+    e.preventDefault();
+    this.setState({
+      itemPayload: itemPayload,
+      view: itemDomain
+    })
   }
 
   handleSearchTermsChange(e, searchObject) {
@@ -82,37 +85,18 @@ export default class App extends Component {
       this.setState({
         searchMode: false,
         searchTerms: searchTerms,
+        results: []
       })
     } else {
       this.setState({
         searchTerms: searchTerms,
-        searchMode: true
+        searchMode: true,
+        loading: true
       }, async () => {
         //make fetch call to get results
         await this.getSearchResults(this.state.searchTerms, this.state.pageNum);
       })
     }
-  }
-
-  componentCleanup() {
-    sessionStorage.setItem(compName, JSON.stringify(this.state));
-  }
-
-  componentDidMount() {
-    window.addEventListener('beforeunload', this.componentCleanup);
-    const persistState = sessionStorage.getItem(compName);
-    if (persistState) {
-      try {
-        this.setState(JSON.parse(persistState));
-      } catch (e) {
-        console.log("Could not get fetch state from local storage for", compName);
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    this.componentCleanup();
-    window.removeEventListener('beforeunload', this.componentCleanup);
   }
 
   /*
@@ -142,6 +126,7 @@ export default class App extends Component {
           </Segment>
           <Segment>
             <Results
+              loading={this.state.loading}
               results={this.state.results}
               handleSelectItem={this.handleSelectItem}
             />
@@ -155,12 +140,19 @@ export default class App extends Component {
         //TODO: drug view
         return <DrugView
           //props
+          name={this.state.itemPayload.name}
+          namesCode={this.state.itemPayload.namesCode}
+          namesBrand={this.state.itemPayload.namesBrand}
+          namesGeneric={this.state.itemPayload.namesGeneric}
+          molecularMechanisms={this.state.itemPayload.molecularMechanism}
+          developmentStatusSummaries={this.state.itemPayload.developmentStatusSummary}
           backToSearch={this.backToSearch}
         />
       case (MECHANISM):
         //TODO: mechanism view
         return <MechanismView
         //props
+        drugNames={this.state.itemPayload.drugs}
         backToSearch={this.backToSearch}
         />;
       default:

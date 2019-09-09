@@ -1,6 +1,6 @@
 export const fakeData = [
     {
-      "mainName": "magna408",
+      "mainName": "magna34",
       "namesCode": [
         "eadolor",
         "dolorepariatur"
@@ -104,7 +104,7 @@ export const fakeData = [
       ]
     },
     {
-      "mainName": "culpa762",
+      "mainName": "magna",
       "namesCode": [
         "nostrudveniam",
         "officiaculpa",
